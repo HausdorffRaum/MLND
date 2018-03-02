@@ -20,12 +20,10 @@ class LearningAgent(Agent):
         self.alpha = alpha       # Learning factor
 
         # Set any additional class parameters as needed
-        
+       
         # The decay faction
-        self.decay_factor = 0.95
-
-        # Which step the agent is in
-        self.step = 1
+        self.decay_factor_epsilon = 0.99
+        self.decay_factor_alpha = 0.995
         
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
@@ -42,10 +40,8 @@ class LearningAgent(Agent):
             self.epsilon = 0
             self.alpha = 0
         else:
-            self.epsilon *= self.decay_factor
-            self.alpha = 0.5 + 0.5*math.cos(0.5*self.step)
-            
-        self.step += 1
+            self.epsilon *= self.decay_factor_epsilon
+            self.alpha *= self.decay_factor_alpha
             
         return None
 
@@ -59,10 +55,6 @@ class LearningAgent(Agent):
         inputs = self.env.sense(self)           # Visual input - intersection light and traffic
         deadline = self.env.get_deadline(self)  # Remaining deadline
 
-        ########### 
-        ## TO DO ##
-        ###########
-        
         # NOTE : you are not allowed to engineer features outside of the inputs available.
         # Because the aim of this project is to teach Reinforcement Learning, we have placed 
         # constraints in order for you to learn how to adjust epsilon and alpha, and thus learn about the balance between exploration and exploitation.
@@ -71,7 +63,8 @@ class LearningAgent(Agent):
         # Set 'state' as a tuple of relevant data for the agent
         state = (('waypoint', waypoint),
                  ('light', inputs['light']),
-                 ('oncoming', inputs['oncoming']))
+                 ('oncoming', inputs['oncoming']),
+                 ('left', inputs['left']))
                  
         return state
 
@@ -133,7 +126,8 @@ class LearningAgent(Agent):
 
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
-        self.Q[state][action] = (1-self.alpha)*self.Q[state][action] + self.alpha*reward
+        if self.learning:
+            self.Q[state][action] = (1-self.alpha)*self.Q[state][action] + self.alpha*reward
 
         return
 
@@ -192,7 +186,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(tolerance=0.0005, n_test=50)
+    sim.run(tolerance=0.05, n_test=25)
 
 
 if __name__ == '__main__':
