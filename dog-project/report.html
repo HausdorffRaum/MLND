@@ -14352,7 +14352,7 @@ test_{network} = bottleneck_features['test']</code></pre>
 
 </code></pre>
 <p><strong>Question 5:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  Describe why you think the architecture is suitable for the current problem.</p>
-<p><strong>Answer:</strong> Notice that the training features are of the dimensionality (7, 7, 2048), thus it makes little sense to add a convolution layer. Instead, we use a global average pooling layer to turn die dimensionality to (1, 1, 2048). After which there came a dense layer with softmax activation and 133 filters to classify all the 133 dog breeds.</p>
+<p><strong>Answer:</strong> Notice that the training features are of the dimensionality (7, 7, 2048), thus it makes little sense to add a convolution layer. Instead, we use a global average pooling layer to turn down the dimensionality to (1, 1, 2048). After which there came a dense layer with softmax activation and 133 filters to classify all the 133 dog breeds. This should be working fine, because the bottleneck features are already trained in a way to detect various structures of an image. What is left to do would be reducing the dimensionality and feed it into a dense layer, which will eventually predict the breed.</p>
 
 </div>
 </div>
